@@ -1,0 +1,6 @@
+build
+*.o
+*.pro.user*
+*.qmlproject.user*
+*~
+.ycm_extra_conf*.py*
