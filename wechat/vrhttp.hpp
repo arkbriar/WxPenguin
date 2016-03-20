@@ -11,6 +11,7 @@
 #include <map>
 #include <cstdint>
 #include <utility>
+#include <memory>
 
 namespace WeChat_Http {
 
@@ -23,7 +24,7 @@ namespace WeChat_Http {
         virtual void SetUrl(const std::string url) noexcept = 0;
     };
 
-    VirtualHttpRequest* NewVirtualHttpRequest_NULLPTR() {
+    std::shared_ptr<VirtualHttpRequest> NewVirtualHttpRequest_NULLPTR() {
         return nullptr;
     }
 
@@ -31,7 +32,7 @@ namespace WeChat_Http {
 
     class HttpError {
     public:
-        HttpError() : error(0) {}
+        HttpError() : error(0), ok(0) {}
 
         template <
             typename ErrorCodeType,
@@ -41,7 +42,7 @@ namespace WeChat_Http {
             : error((std::int64_t)code), message(error_message) {}
 
         explicit operator bool() const {
-            return error == 0;
+            return error != ok;
         }
 
         template <
@@ -49,7 +50,7 @@ namespace WeChat_Http {
             typename std::enable_if<std::is_enum<ErrorCodeType>::value, int>::type = 0
             >
         bool operator == (const ErrorCodeType code) {
-            return std::int64_t(code) == 0;
+            return std::int64_t(code) == error;
         }
 
         bool operator == (const std::int64_t code) {
@@ -75,6 +76,8 @@ namespace WeChat_Http {
     private:
         std::int64_t error;
         std::string message;
+
+        const std::int64_t ok;
     };
 
     class VirtualHttpReply {
@@ -96,11 +99,13 @@ namespace WeChat_Http {
         VirtualHttpSession() {}
         virtual ~VirtualHttpSession() = 0;
 
-        virtual VirtualHttpReply* Get(const VirtualHttpRequest &request) const = 0;
-        virtual VirtualHttpReply* Head(const VirtualHttpRequest &request) const = 0;
-        virtual VirtualHttpReply* Post(const VirtualHttpRequest &request, std::string data) const = 0;
-        virtual VirtualHttpReply* Post(const VirtualHttpRequest &request, std::map<std::string, std::string> data) const = 0;
-        virtual VirtualHttpReply* Put(const VirtualHttpRequest &request, std::string data) const = 0;
+        virtual std::shared_ptr<VirtualHttpReply> Get(const VirtualHttpRequest &request) const = 0;
+        virtual std::shared_ptr<VirtualHttpReply> Head(const VirtualHttpRequest &request) const = 0;
+        virtual std::shared_ptr<VirtualHttpReply> Post(const VirtualHttpRequest &request, std::string data) const = 0;
+        virtual std::shared_ptr<VirtualHttpReply> Post(const VirtualHttpRequest &request, std::map<std::string, std::string> data) const = 0;
+        virtual std::shared_ptr<VirtualHttpReply> Put(const VirtualHttpRequest &request, std::string data) const = 0;
+
+        virtual std::string GetCookieValue(const std::string key) const = 0;
     };
 
     VirtualHttpSession::~VirtualHttpSession() {}
