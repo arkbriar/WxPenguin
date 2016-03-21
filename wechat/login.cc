@@ -45,7 +45,9 @@ std::string WxClient::LoginCheckLoop() {
     bool isConfirm = false;
     while (!isScan || !isConfirm) {
         auto wxapi = WxLoginCheck;
+        if(isScan) wxapi = WxLoginCheckAfterScan;
         wxapi.SetParam("uuid", qr_uuid);
+        wxapi.SetParam("r", ~(int)(Util::GetUtcMilli()));
         wxapi.SetParam("_", Util::GetUtcMilli());
 
         auto request = r_factory();
@@ -71,6 +73,13 @@ std::string WxClient::LoginCheckLoop() {
                 isScan = isConfirm = true;
                 break;
             case 201:
+                {
+                    std::string& userAvatar = ress[1];
+                    auto comma = userAvatar.find_first_of(",");
+                    // load avatar on scan
+                    if(std::string::npos != comma)
+                        ctl.AvatarLoad(userAvatar.substr(comma + 1, userAvatar.size() - comma - 1));
+                }
                 isScan = true;
                 std::this_thread::sleep_for(std::chrono::milliseconds(1000));
                 break;
@@ -97,11 +106,28 @@ void WxClient::GetSidAndUid(const std::string& url)
     if(response->Error()) throw std::runtime_error(response->Error().ErrorMessage());
 
     auto text = response->Response();
+
+    std::smatch match;
+    static const std::regex ret_p("(<ret>)(.*)(</ret>)");
+    static const std::regex message_p("(<message>(.*)</message>)");
+
+    if(std::regex_match(text, match, ret_p)) {
+        int ret = std::atoi(match[2].str().c_str());
+        if(ret != 0) {
+            if(std::regex_match(text, match, message_p)) {
+                throw std::runtime_error(std::string(__PRETTY_FUNCTION__).append(": ").append(match[2]));
+            } else {
+                throw std::runtime_error(std::string(__PRETTY_FUNCTION__).append(": can not find error message"));
+            }
+        }
+    } else {
+        throw std::runtime_error(std::string(__PRETTY_FUNCTION__).append(": can not find ret code"));
+    }
+
     // sid and uid in cookie, skey and pass_ticket in text
     static const std::regex skey_p("(<skey>)(.*)(</skey>)");
     static const std::regex pass_ticket_p("(<pass_ticket>)(.*)(</pass_ticket>)");
 
-    std::smatch match;
     if(std::regex_search(text, match, skey_p)) {
         skey = match[2];
     } else {

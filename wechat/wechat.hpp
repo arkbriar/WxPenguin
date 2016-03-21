@@ -19,6 +19,10 @@ namespace WeChat_Http {
 
     static const std::string Referer = "https://wx.qq.com/?lang=en_US";
 
+    namespace Util {
+        std::string UrlEncode(const std::string& value);
+    }
+
     class WxWebApi {
     public:
         explicit WxWebApi(std::string url)
@@ -29,7 +33,7 @@ namespace WeChat_Http {
             auto x = url.find_first_of(key + "=");
             if (x == std::string::npos) return;
             if (url.substr(x += key.size() + 1, 4) == "{##}") {
-                url.replace(x, 4,value);
+                url.replace(x, 4, Util::UrlEncode(value));
             }
         }
 
@@ -38,19 +42,22 @@ namespace WeChat_Http {
         }
     };
 
-    extern const WxWebApi Wx, WxQRUUid, WxQR, WxLoginCheck, WxGetImg,
-           WxInit, WxIcon, WxHeadImg, WxContact, WxSyncCheck, WxSync, WxSendImg;
+    extern const WxWebApi Wx, WxQRUUid, WxQR, WxLoginCheck, WxGetImg, WxLoginCheckAfterScan,
+           WxInit, WxIcon, WxHeadImg, WxContactList, WxContactInfo, WxSyncCheck, WxSync, WxSendImg;
 
     class WxCtl {
     protected:
         WxCtl() {}
         virtual ~WxCtl() {};
     public:
-        virtual void QRload(std::string qr_url) = 0;
-
+        virtual void QRload(const std::string& qr_url) = 0;
+        virtual void AvatarLoad(const std::string& avatar) = 0;
         virtual void WxInit(const std::string& json_string) = 0;
-
         virtual void ContactsRefresh() = 0;
+        virtual void ChatRefresh(const std::string& username, const std::string& context) = 0;
+        virtual void Voice(const std::string& voice_url) = 0;
+
+        virtual void Image(const std::string& iamge_url) = 0;
     };
 
     class WxClient {
@@ -68,21 +75,19 @@ namespace WeChat_Http {
 
         void Logout();
 
-        std::string GetIcon(std::string username);
+        std::string GetHeadImage(const std::string& headimg_url) const;
 
-        std::string GetHeadImage(std::string username);
+        std::string GetContactList() const;
 
-        void GetContact();
+        std::string GetContactInfo(const std::vector<std::pair<std::string, std::string>>& username_encrychatroomids) const;
 
-        std::string WxSyncCheck();
+        void WxSyncCheck();
 
-        void WxSync();
+        void SendMsg(std::string msg, std::string from, std::string to, int type) const;
 
-        void SendMsg(std::string msg, std::string from, std::string to, int type);
+        void SendImage(std::string img_uri) const;
 
-        void SendImage(std::string img_uri);
-
-        void SendFile(std::string file_uri);
+        void SendFile(std::string file_uri) const;
 
     private:
         std::string qr_uuid;
@@ -92,14 +97,21 @@ namespace WeChat_Http {
         std::string pass_ticket;
         std::string skey;
 
+        std::string synckey;
+        std::string synckey_json;
+
         void WxInit();
-
         std::string GetQRCode();
-
         std::string LoginCheckLoop();
 
         void GetSidAndUid(const std::string& url);
 
+        void WxSync();
+
+        static std::string DumpSyncKey(std::vector<std::map<std::string, int>> synckeys);
+
+        void UpdateSyncKey(const std::string& res_text_in_json);
+        void ControlOnSync(const std::string& res_text_in_json);
     };
 }
 
