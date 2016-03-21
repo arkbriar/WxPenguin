@@ -27,7 +27,7 @@ void WxClient::WxInit()
 
     UpdateSyncKey(response->Response());
 
-    ctl.WxInit(response->Response());
+    hdl.WxInit(response->Response());
 }
 
 std::string WxClient::GetHeadImage(const std::string &headimg_url) const
@@ -155,9 +155,44 @@ void WxClient::WxSyncCheck()
     throw std::runtime_error("wechat sync failed");
 }
 
-void WxClient::SendMsg(std::string msg, std::string from, std::string to, int type) const
+json& SendingPayload(json& payload, const std::string& content, const std::string& from, const std::string& to, int type)
 {
+    json msg;
+    msg["Type"] = type;
+    msg["Content"] = content;
+    msg["FromUserName"] = from;
+    msg["ToUserName"] = to;
+    msg["LocalID"] = std::to_string(WeChat_Http::Util::GetUtcMilli()).append(std::to_string((std::rand() & 0x1ff) + 100));
+    msg["ClientMsgId"] = msg["LocalId"].get<std::string>();
 
+    payload["Msg"] = msg;
+    return payload;
+}
+
+bool WxClient::SendText(const std::string& msg, const std::string& from, const std::string& to) const
+{
+    auto wxapi = WeChat_Http::WxGetImg;
+    wxapi.SetParam("pass_ticket", pass_ticket);
+
+    auto request = r_factory();
+    request->SetUrl(wxapi.url);
+
+    json payload;
+    json base_request;
+    base_request["Uin"] = wxuin;
+    base_request["Sid"] = wxsid;
+    base_request["Skey"] = skey;
+    base_request["DeviceID"] = "e762880274648329";
+    payload["BaseRequest"] = base_request;
+    auto response = session.Post(*request, SendingPayload(payload, msg, from, to, 1).dump());
+    if(response->Error()) throw std::runtime_error(response->Error().ErrorMessage());
+
+    json ret_json = json::parse(response->Response());
+
+    /*@TODO
+     */
+
+    return true;
 }
 
 std::string WxClient::DumpSyncKey(std::vector<std::map<std::string, int>> synckeys)

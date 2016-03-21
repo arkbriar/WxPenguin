@@ -17,5 +17,5 @@ namespace WeChat_Http {
         WxSyncCheck("https://webpush.weixin.qq.com/cgi-bin/mmwebwx-bin/synccheck?r={##}&skey={##}&sid={##}&deviceid=e762880274648329&synckey={##}"),
         WxSync("https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxsync?sid={##}&skey={##}&lang=en_US&pass_ticket={##}"),
         WxSendImg(""),
-        WxGetImg("https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxgetmsgimg");
+        WxGetImg("https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxsendmsg?lang=en_US&pass_ticket={##}");
 }

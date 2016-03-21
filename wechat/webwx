@@ -1,0 +1,9 @@
+#pragma once
+
+#ifndef WEBWX_EHB5Z3F8
+#define WEBWX_EHB5Z3F8
+
+#include "vrhttp.hpp"
+#include "wechat.hpp"
+
+#endif /* end of include guard: WEBWX_EHB5Z3F8 */

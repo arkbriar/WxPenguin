@@ -7,10 +7,8 @@
  * */
 
 #include <string>
-#include <vector>
 #include <map>
 #include <cstdint>
-#include <utility>
 #include <memory>
 
 namespace WeChat_Http {
@@ -24,11 +22,7 @@ namespace WeChat_Http {
         virtual void SetUrl(const std::string url) noexcept = 0;
     };
 
-    std::shared_ptr<VirtualHttpRequest> NewVirtualHttpRequest_NULLPTR() {
-        return nullptr;
-    }
-
-    VirtualHttpRequest::~VirtualHttpRequest() {}
+    std::shared_ptr<VirtualHttpRequest> NewVirtualHttpRequest_NULLPTR();
 
     class HttpError {
     public:
@@ -92,8 +86,6 @@ namespace WeChat_Http {
         virtual HttpError Error() const noexcept = 0;
     };
 
-    VirtualHttpReply::~VirtualHttpReply() {}
-
     class VirtualHttpSession {
     public:
         VirtualHttpSession() {}
@@ -102,13 +94,11 @@ namespace WeChat_Http {
         virtual std::shared_ptr<VirtualHttpReply> Get(const VirtualHttpRequest &request) const = 0;
         virtual std::shared_ptr<VirtualHttpReply> Head(const VirtualHttpRequest &request) const = 0;
         virtual std::shared_ptr<VirtualHttpReply> Post(const VirtualHttpRequest &request, std::string data) const = 0;
-        virtual std::shared_ptr<VirtualHttpReply> Post(const VirtualHttpRequest &request, std::map<std::string, std::string> data) const = 0;
         virtual std::shared_ptr<VirtualHttpReply> Put(const VirtualHttpRequest &request, std::string data) const = 0;
 
         virtual std::string GetCookieValue(const std::string key) const = 0;
     };
 
-    VirtualHttpSession::~VirtualHttpSession() {}
 }
 
 #endif /* end of include guard: VRHTTP_HPP_OX1KUYLI */

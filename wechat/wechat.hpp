@@ -5,8 +5,10 @@
 
 #include <string>
 #include <ctime>
+#include <vector>
 
 #include "vrhttp.hpp"
+#include "wxapi.hpp"
 
 namespace WeChat_Http {
 
@@ -19,44 +21,20 @@ namespace WeChat_Http {
 
     static const std::string Referer = "https://wx.qq.com/?lang=en_US";
 
-    namespace Util {
-        std::string UrlEncode(const std::string& value);
-    }
-
-    class WxWebApi {
-    public:
-        explicit WxWebApi(std::string url)
-            : url(url) {}
-        std::string url;
-
-        void SetParam(std::string key, std::string value) {
-            auto x = url.find_first_of(key + "=");
-            if (x == std::string::npos) return;
-            if (url.substr(x += key.size() + 1, 4) == "{##}") {
-                url.replace(x, 4, Util::UrlEncode(value));
-            }
-        }
-
-        void SetParam(std::string key, std::int64_t value) {
-            SetParam(key, std::to_string(value));
-        }
-    };
-
-    extern const WxWebApi Wx, WxQRUUid, WxQR, WxLoginCheck, WxGetImg, WxLoginCheckAfterScan,
-           WxInit, WxIcon, WxHeadImg, WxContactList, WxContactInfo, WxSyncCheck, WxSync, WxSendImg;
-
-    class WxCtl {
+    class WxHandler {
     protected:
-        WxCtl() {}
-        virtual ~WxCtl() {};
+        WxHandler() {}
+        virtual ~WxHandler() {};
     public:
+        /* on login */
         virtual void QRload(const std::string& qr_url) = 0;
         virtual void AvatarLoad(const std::string& avatar) = 0;
+
+        /* after login */
         virtual void WxInit(const std::string& json_string) = 0;
         virtual void ContactsRefresh() = 0;
         virtual void ChatRefresh(const std::string& username, const std::string& context) = 0;
         virtual void Voice(const std::string& voice_url) = 0;
-
         virtual void Image(const std::string& iamge_url) = 0;
     };
 
@@ -65,11 +43,11 @@ namespace WeChat_Http {
         VrSession& session;
         VrReqFactory& r_factory;
 
-        WxCtl& ctl;
+        WxHandler& hdl;
 
     public:
-        WxClient(VrSession& session, VrReqFactory& reqfactory, WxCtl& ctl)
-            : session(session) , r_factory(reqfactory), ctl(ctl) {}
+        WxClient(VrSession& session, VrReqFactory& reqfactory, WxHandler& hdl)
+            : session(session) , r_factory(reqfactory), hdl(hdl) {}
 
         void Login();
 
@@ -83,11 +61,9 @@ namespace WeChat_Http {
 
         void WxSyncCheck();
 
-        void SendMsg(std::string msg, std::string from, std::string to, int type) const;
-
-        void SendImage(std::string img_uri) const;
-
-        void SendFile(std::string file_uri) const;
+        bool SendText(const std::string& msg, const std::string& from, const std::string& to) const;
+        bool SendImage(const std::string& img_uri, const std::string& from, const std::string& to) const;
+        bool SendFile(const std::string& file_uri, const std::string& from, const std::string& to) const;
 
     private:
         std::string qr_uuid;
@@ -108,10 +84,14 @@ namespace WeChat_Http {
 
         void WxSync();
 
+        void UpdateSyncKey(const std::string& res_text_in_json);
+
+        void ControlOnSync(const std::string& res_text_in_json);
+
         static std::string DumpSyncKey(std::vector<std::map<std::string, int>> synckeys);
 
-        void UpdateSyncKey(const std::string& res_text_in_json);
-        void ControlOnSync(const std::string& res_text_in_json);
+        static void SetRequestHead();
+
     };
 }
 

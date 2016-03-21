@@ -78,7 +78,7 @@ std::string WxClient::LoginCheckLoop() {
                     auto comma = userAvatar.find_first_of(",");
                     // load avatar on scan
                     if(std::string::npos != comma)
-                        ctl.AvatarLoad(userAvatar.substr(comma + 1, userAvatar.size() - comma - 1));
+                        hdl.AvatarLoad(userAvatar.substr(comma + 1, userAvatar.size() - comma - 1));
                 }
                 isScan = true;
                 std::this_thread::sleep_for(std::chrono::milliseconds(1000));
@@ -90,7 +90,7 @@ std::string WxClient::LoginCheckLoop() {
             case 0:
             default:
                 isScan = isConfirm = false;
-                ctl.QRload(GetQRCode());
+                hdl.QRload(GetQRCode());
                 break;
         }
     }
@@ -149,7 +149,7 @@ void WxClient::GetSidAndUid(const std::string& url)
 
 void WxClient::Login()
 {
-    ctl.QRload(GetQRCode());
+    hdl.QRload(GetQRCode());
     GetSidAndUid(LoginCheckLoop());
 }
 
