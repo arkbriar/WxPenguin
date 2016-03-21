@@ -40,14 +40,20 @@ namespace WeChat_Http {
 
     class WxClient {
     private:
-        VrSession& session;
+        VrSession& recv_session;
+
+        VrSession* _send_session;
+        VrSession& send_session;
+
         VrReqFactory& r_factory;
 
         WxHandler& hdl;
 
     public:
         WxClient(VrSession& session, VrReqFactory& reqfactory, WxHandler& hdl)
-            : session(session) , r_factory(reqfactory), hdl(hdl) {}
+            : recv_session(session), _send_session(session.Copy()), send_session(*_send_session), r_factory(reqfactory), hdl(hdl) {}
+
+        ~WxClient() {delete _send_session;}
 
         void Login();
 

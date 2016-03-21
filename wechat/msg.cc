@@ -22,7 +22,7 @@ void WxClient::WxInit()
     auto request = r_factory();
     request->SetUrl(wxapi.url);
 
-    auto response = session.Post(*request, payload.dump());
+    auto response = recv_session.Post(*request, payload.dump());
     if(response->Error()) throw std::runtime_error(response->Error().ErrorMessage());
 
     UpdateSyncKey(response->Response());
@@ -35,7 +35,7 @@ std::string WxClient::GetHeadImage(const std::string &headimg_url) const
     auto request = r_factory();
     request->SetUrl(Wx.url + headimg_url);
 
-    auto response = session.Get(*request);
+    auto response = recv_session.Get(*request);
     if(response->Error()) throw std::runtime_error(response->Error().ErrorMessage());
 
     return response->Response();
@@ -51,7 +51,7 @@ std::string WxClient::GetContactList() const
     auto request = r_factory();
     request->SetUrl(wxapi.url);
 
-    auto response = session.Get(*request);
+    auto response = recv_session.Get(*request);
     if(response->Error()) throw std::runtime_error(response->Error().ErrorMessage());
 
     return response->Response();
@@ -80,7 +80,7 @@ std::string WxClient::GetContactInfo(const std::vector<std::pair<std::string, st
     }
     payload["List"] = list;
 
-    auto response = session.Post(*request, payload.dump());
+    auto response = recv_session.Post(*request, payload.dump());
     if(response->Error()) throw std::runtime_error(response->Error().ErrorMessage());
 
     return response->Response();
@@ -106,7 +106,7 @@ void WxClient::WxSync()
     auto request = r_factory();
     request->SetUrl(wxapi.url);
 
-    auto response = session.Post(*request, payload.dump());
+    auto response = recv_session.Post(*request, payload.dump());
     if(response->Error()) throw std::runtime_error(response->Error().ErrorMessage());
 
     auto text = response->Response();
@@ -127,7 +127,7 @@ void WxClient::WxSyncCheck()
     auto request = r_factory();
     request->SetUrl(wxapi.url);
 
-    auto response = session.Get(*request);
+    auto response = recv_session.Get(*request);
     if(response->Error()) throw std::runtime_error(response->Error().ErrorMessage());
 
     auto text = response->Response();
@@ -162,7 +162,7 @@ json& SendingPayload(json& payload, const std::string& content, const std::strin
     msg["Content"] = content;
     msg["FromUserName"] = from;
     msg["ToUserName"] = to;
-    msg["LocalID"] = std::to_string(WeChat_Http::Util::GetUtcMilli()).append(std::to_string((std::rand() & 0x1ff) + 100));
+    msg["LocalID"] = std::to_string(WeChat_Http::Util::GetUtcMilli()).append("0").append(std::to_string((std::rand() & 0x1ff) + 100));
     msg["ClientMsgId"] = msg["LocalId"].get<std::string>();
 
     payload["Msg"] = msg;
@@ -184,7 +184,7 @@ bool WxClient::SendText(const std::string& msg, const std::string& from, const s
     base_request["Skey"] = skey;
     base_request["DeviceID"] = "e762880274648329";
     payload["BaseRequest"] = base_request;
-    auto response = session.Post(*request, SendingPayload(payload, msg, from, to, 1).dump());
+    auto response = send_session.Post(*request, SendingPayload(payload, msg, from, to, 1).dump());
     if(response->Error()) throw std::runtime_error(response->Error().ErrorMessage());
 
     json ret_json = json::parse(response->Response());

@@ -6,4 +6,15 @@
 #include "vrhttp.hpp"
 #include "wechat.hpp"
 
+namespace WebWx {
+    using VrSession = WeChat_Http::VrSession;
+    using VrReply = WeChat_Http::VirtualHttpReply;
+    using VrRequest = WeChat_Http::VirtualHttpRequest;
+    using VrReqFactory = decltype(WeChat_Http::NewVirtualHttpRequest_NULLPTR);
+
+    using WxHandler = WeChat_Http::WxHandler;
+
+    using WxClient = WeChat_Http::WxClient;
+}
+
 #endif /* end of include guard: WEBWX_EHB5Z3F8 */
