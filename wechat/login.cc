@@ -16,7 +16,7 @@ std::string WxClient::GetQRCode()
     auto request = r_factory();
     request->SetUrl(wxapi.url);
 
-    auto response = recv_session.Get(*request);
+    auto response = session.Get(*request);
     if(response->Error()) throw std::runtime_error(response->Error().ErrorMessage());
 
     auto text = response->Response();
@@ -53,7 +53,7 @@ std::string WxClient::LoginCheckLoop() {
         auto request = r_factory();
         request->SetUrl(wxapi.url);
 
-        auto response = recv_session.Get(*request);
+        auto response = session.Get(*request);
         if(response->Error()) throw std::runtime_error(response->Error().ErrorMessage());
 
         auto text = response->Response();
@@ -102,7 +102,7 @@ void WxClient::GetSidAndUid(const std::string& url)
     auto request = r_factory();
     request->SetUrl(url);
 
-    auto response = recv_session.Get(*request);
+    auto response = session.Get(*request);
     if(response->Error()) throw std::runtime_error(response->Error().ErrorMessage());
 
     auto text = response->Response();
@@ -140,8 +140,8 @@ void WxClient::GetSidAndUid(const std::string& url)
         throw std::runtime_error("cannot find pass_ticket in response");
     }
 
-    wxsid = recv_session.GetCookieValue("wxsid");
-    wxuin = recv_session.GetCookieValue("wxuin");
+    wxsid = session.GetCookieValue("wxsid");
+    wxuin = session.GetCookieValue("wxuin");
     if(wxsid.empty() || wxuin.empty()) {
         throw std::runtime_error("can not find wxsid or wxuin in cooike");
     }
@@ -151,6 +151,7 @@ void WxClient::Login()
 {
     hdl.QRload(GetQRCode());
     GetSidAndUid(LoginCheckLoop());
+    WxInit();
 }
 
 void WxClient::Logout()

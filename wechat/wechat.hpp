@@ -40,10 +40,7 @@ namespace WeChat_Http {
 
     class WxClient {
     private:
-        VrSession& recv_session;
-
-        VrSession* _send_session;
-        VrSession& send_session;
+        VrSession& session;
 
         VrReqFactory& r_factory;
 
@@ -51,25 +48,30 @@ namespace WeChat_Http {
 
     public:
         WxClient(VrSession& session, VrReqFactory& reqfactory, WxHandler& hdl)
-            : recv_session(session), _send_session(session.Copy()), send_session(*_send_session), r_factory(reqfactory), hdl(hdl) {}
+            : session(session), r_factory(reqfactory), hdl(hdl) {}
 
-        ~WxClient() {delete _send_session;}
+        ~WxClient() {}
 
         void Login();
-
         void Logout();
 
+        // set of functions using http session of client
         std::string GetHeadImage(const std::string& headimg_url) const;
-
         std::string GetContactList() const;
-
         std::string GetContactInfo(const std::vector<std::pair<std::string, std::string>>& username_encrychatroomids) const;
-
         void WxSyncCheck();
-
         bool SendText(const std::string& msg, const std::string& from, const std::string& to) const;
         bool SendImage(const std::string& img_uri, const std::string& from, const std::string& to) const;
         bool SendFile(const std::string& file_uri, const std::string& from, const std::string& to) const;
+
+        // set of functions using different http session
+        std::string GetHeadImage(const VrSession& session, const std::string& headimg_url) const;
+        std::string GetContactList(const VrSession& session) const;
+        std::string GetContactInfo(const VrSession& session, const std::vector<std::pair<std::string, std::string>>& username_encrychatroomids) const;
+        void WxSyncCheck(const VrSession& session);
+        bool SendText(const VrSession& session, const std::string& msg, const std::string& from, const std::string& to) const;
+        bool SendImage(const VrSession& session, const std::string& img_uri, const std::string& from, const std::string& to) const;
+        bool SendFile(const VrSession& session, const std::string& file_uri, const std::string& from, const std::string& to) const;
 
     private:
         std::string qr_uuid;
@@ -89,6 +91,7 @@ namespace WeChat_Http {
         void GetSidAndUid(const std::string& url);
 
         void WxSync();
+        void WxSync(const VrSession& session);
 
         void UpdateSyncKey(const std::string& res_text_in_json);
 

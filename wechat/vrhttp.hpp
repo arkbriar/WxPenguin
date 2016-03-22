@@ -97,8 +97,6 @@ namespace WeChat_Http {
         virtual std::shared_ptr<VirtualHttpReply> Put(const VirtualHttpRequest &request, std::string data) const = 0;
 
         virtual std::string GetCookieValue(const std::string key) const = 0;
-
-        virtual VirtualHttpSession* Copy() const = 0;
     };
 
 }
