@@ -12,7 +12,6 @@
 #include "wxhandler.hpp"
 
 #include "models/wx_baserequest.hpp"
-#include "models/wxmodel.hpp"
 
 namespace WebWx {
 
@@ -46,8 +45,8 @@ namespace WebWx {
 
         // set of functions using http session of client
         std::string GetHeadImage(const std::string& headimg_url) const;
-        std::string GetContactList() const;
-        std::string GetContactInfo(const std::vector<std::pair<std::string, std::string>>& username_encrychatroomids) const;
+        void GetContact() const;
+        void BatchGetContact(const std::vector<std::pair<std::string, std::string>>& username_encrychatroomids) const;
         void WxSyncCheck();
         bool SendText(const std::string& msg, const std::string& from, const std::string& to) const;
         bool SendImage(const std::string& img_uri, const std::string& from, const std::string& to) const;
@@ -55,8 +54,8 @@ namespace WebWx {
 
         // set of functions using different http session
         std::string GetHeadImage(const VrSession& session, const std::string& headimg_url) const;
-        std::string GetContactList(const VrSession& session) const;
-        std::string GetContactInfo(const VrSession& session, const std::vector<std::pair<std::string, std::string>>& username_encrychatroomids) const;
+        void GetContact(const VrSession& session) const;
+        void BatchGetContact(const VrSession& session, const std::vector<std::pair<std::string, std::string>>& username_encrychatroomids) const;
         void WxSyncCheck(const VrSession& session);
         bool SendText(const VrSession& session, const std::string& msg, const std::string& from, const std::string& to) const;
         bool SendImage(const VrSession& session, const std::string& img_uri, const std::string& from, const std::string& to) const;
@@ -76,6 +75,7 @@ namespace WebWx {
         std::string synckey;
         std::string synckey_json;
 
+    private:
         void WxInit();
         std::string GetQRCode();
         std::string LoginCheckLoop();
@@ -87,7 +87,7 @@ namespace WebWx {
 
         void UpdateSyncKey(const std::string& res_text_in_json);
 
-        void ControlOnSync(const std::string& res_text_in_json);
+        void ControlOnSync(const Model::WxSyncResponse &res);
 
         static std::string DumpSyncKey(std::vector<std::map<std::string, int>> synckeys);
 

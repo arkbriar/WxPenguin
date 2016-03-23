@@ -20,9 +20,11 @@ void WxClient::WxInit()
     auto response = session.Post(*request, payload.dump());
     if(response->Error()) throw std::runtime_error(response->Error().ErrorMessage());
 
-    UpdateSyncKey(response->Response());
+    auto text = response->Response();
 
-    hdl.WxInit(response->Response());
+    UpdateSyncKey(text);
+
+    hdl.WxInit(Model::WxInitResponse(text));
 }
 
 std::string WxClient::GetHeadImage(const std::string &headimg_url) const
@@ -41,12 +43,12 @@ std::string WxClient::GetHeadImage(const VrSession& session, const std::string &
     return response->Response();
 }
 
-std::string WxClient::GetContactList() const
+void WxClient::GetContact() const
 {
-    return GetContactList(session);
+    return GetContact(session);
 }
 
-std::string WxClient::GetContactList(const VrSession& session) const
+void WxClient::GetContact(const VrSession& session) const
 {
     auto wxapi = WxContactList;
     wxapi.SetParam("pass_ticket", pass_ticket);
@@ -59,15 +61,15 @@ std::string WxClient::GetContactList(const VrSession& session) const
     auto response = session.Get(*request);
     if(response->Error()) throw std::runtime_error(response->Error().ErrorMessage());
 
-    return response->Response();
+    hdl.ContactsRefresh(Model::WxGetContactResponse(response->Response()));
 }
 
-std::string WxClient::GetContactInfo(const std::vector<std::pair<std::string, std::string>>& pairs) const
+void WxClient::BatchGetContact(const std::vector<std::pair<std::string, std::string>>& pairs) const
 {
-    return GetContactInfo(session, pairs);
+    return BatchGetContact(session, pairs);
 }
 
-std::string WxClient::GetContactInfo(const VrSession& session, const std::vector<std::pair<std::string, std::string>>& pairs) const
+void WxClient::BatchGetContact(const VrSession& session, const std::vector<std::pair<std::string, std::string>>& pairs) const
 {
     auto wxapi = WxContactInfo;
     wxapi.SetParam("pass_ticket", pass_ticket);
@@ -88,7 +90,7 @@ std::string WxClient::GetContactInfo(const VrSession& session, const std::vector
     auto response = session.Post(*request, payload.dump());
     if(response->Error()) throw std::runtime_error(response->Error().ErrorMessage());
 
-    return response->Response();
+    hdl.ContactsRefresh(Model::WxBatchContactResponse(response->Response()));
 }
 
 void WxClient::WxSync()
@@ -118,7 +120,7 @@ void WxClient::WxSync(const VrSession& session)
 
     UpdateSyncKey(text);
 
-    ControlOnSync(text);
+    ControlOnSync(Model::WxSyncResponse(text));
 }
 
 void WxClient::WxSyncCheck()
@@ -161,8 +163,6 @@ void WxClient::WxSyncCheck(const VrSession& session)
     if(retcode != 0 || selector != 0) {
         WxSync();
     }
-
-    throw std::runtime_error("wechat sync failed");
 }
 
 json& SendingPayload(json& payload, const std::string& content, const std::string& from, const std::string& to, int type)
@@ -192,10 +192,9 @@ bool WxClient::SendText(const std::string& msg, const std::string& from, const s
     auto response = session.Post(*request, SendingPayload(payload, msg, from, to, 1).dump());
     if(response->Error()) throw std::runtime_error(response->Error().ErrorMessage());
 
-    json ret_json = json::parse(response->Response());
+    Model::WxSendResponse res(response->Response());
 
-    /*@TODO
-     */
+    hdl.SendStatus(static_cast<Model::MsgSendStatus>(res.BaseResponse.Ret));
 
     return true;
 }

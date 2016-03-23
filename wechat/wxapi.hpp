@@ -11,9 +11,9 @@ namespace WebWx {
         std::string UrlEncode(const std::string& value);
     }
 
-    class WxWebApi {
+    class WxWebAPI {
     public:
-        explicit WxWebApi(std::string url)
+        explicit WxWebAPI(std::string url)
             : url(url) {}
         std::string url;
 
@@ -30,7 +30,7 @@ namespace WebWx {
         }
     };
 
-    extern const WxWebApi
+    extern const WxWebAPI
         Wx,
         WxQRUUid,
         WxQR,
@@ -45,6 +45,41 @@ namespace WebWx {
         WxSyncCheck,
         WxSync,
         WxSendImg;
+
+    /*
+     *extern const WxWebAPI
+     *  API_jsLogin,
+     *  API_login,
+     *  API_synccheck,
+     *  API_webwxdownloadmedia,
+     *  API_webwxuploadmedia,
+     *  API_webwxpreview,
+     *  API_webwxinit,
+     *  API_webwxgetcontact,
+     *  API_webwxsync,
+     *  API_webwxbatchgetcontact,
+     *  API_webwxgeticon,
+     *  API_webwxsendmsg,
+     *  API_webwxsendmsgimg,
+     *  API_webwxsendemoticon,
+     *  API_webwxsendappmsg,
+     *  API_webwxgetheadimg,
+     *  API_webwxgetmsgimg,
+     *  API_webwxgetmedia,
+     *  API_webwxgetvideo,
+     *  API_webwxlogout,
+     *  API_webwxgetvoice,
+     *  API_webwxupdatechatroom,
+     *  API_webwxcreatechatroom,
+     *  API_webwxstatusnotify,
+     *  API_webwxcheckurl,
+     *  API_webwxverifyuser,
+     *  API_webwxfeedback,
+     *  API_webwxreport,
+     *  API_webwxsearch,
+     *  API_webwxoplog;
+     */
+
 }
 
 

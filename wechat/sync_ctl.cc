@@ -5,7 +5,8 @@ using json = nlohmann::json;
 
 using WxClient = WebWx::WxClient;
 
-void WxClient::ControlOnSync(const std::string& res_text_in_json)
+void WxClient::ControlOnSync(const Model::WxSyncResponse &res)
 {
-
+    /*@TODO
+     */
 }
