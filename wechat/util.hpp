@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-namespace WeChat_Http {
+namespace WebWx {
     namespace Util {
 
         std::uint64_t GetUtcMilli();

@@ -37,11 +37,15 @@ namespace WebWx {
             JSON_GET(j, Signature);
             JSON_GET(j, Alias);
             JSON_GET(j, Scene);
-            JSON_GET(j, VerifyFlag);
-            JSON_GET(j, AttrStatus);
             JSON_GET(j, Sex);
             JSON_GET(j, Ticket);
-            JSON_GET(j, OpCode);
+            try {
+                JSON_GET(j, AttrStatus);
+                JSON_GET(j, VerifyFlag);
+                JSON_GET(j, OpCode);
+            } catch (std::domain_error e) {
+
+            }
         }
 
         WxAppInfo::WxAppInfo() {}
@@ -92,11 +96,16 @@ namespace WebWx {
             JSON_GET(j, AttrStatus);
             JSON_GET(j, PYInitial);
             JSON_GET(j, PYQuanPin);
-            JSON_GET(j, RemarkPYInitial);
-            JSON_GET(j, RemarkPYQuanPin);
             JSON_GET(j, MemberStatus);
             JSON_GET(j, DisplayName);
             JSON_GET(j, KeyWord);
+
+            try {
+                JSON_GET(j, RemarkPYInitial);
+                JSON_GET(j, RemarkPYQuanPin);
+            } catch (std::domain_error e) {
+
+            }
         }
 
         WxContact::WxContact() {}
@@ -116,21 +125,26 @@ namespace WebWx {
             JSON_GET(j, VerifyFlag);
             JSON_GET(j, PYInitial);
             JSON_GET(j, PYQuanPin);
-            JSON_GET(j, RemarkPYInitial);
-            JSON_GET(j, RemarkPYQuanPin);
-            JSON_GET(j, StarFriend);
-            JSON_GET(j, AppAcountFlag);
             JSON_GET(j, Statues);
             JSON_GET(j, AttrStatus);
             JSON_GET(j, Province);
             JSON_GET(j, City);
             JSON_GET(j, Alias);
-            JSON_GET(j, SnsFlag);
             JSON_GET(j, UniFriend);
             JSON_GET(j, DisplayName);
             JSON_GET(j, ChatRoomId);
             JSON_GET(j, KeyWord);
             JSON_GET(j, EncryChatRoomId);
+
+            try {
+                JSON_GET(j, RemarkPYInitial);
+                JSON_GET(j, RemarkPYQuanPin);
+                JSON_GET(j, StarFriend);
+                JSON_GET(j, SnsFlag);
+                JSON_GET(j, AppAcountFlag);
+            } catch (std::domain_error e) {
+
+            }
         }
 
         WxUser::WxUser() {}
@@ -141,21 +155,26 @@ namespace WebWx {
             JSON_GET(j, ContactFlag);
             JSON_GET(j, HeadImgFlag);
             JSON_GET(j, HeadImgUrl);
-            JSON_GET(j, HideInputBarFlag);
             JSON_GET(j, NickName);
             JSON_GET(j, PYInitial);
             JSON_GET(j, PYQuanPin);
             JSON_GET(j, RemarkName);
-            JSON_GET(j, RemarkPYInitial);
-            JSON_GET(j, RemarkPYQuanPin);
             JSON_GET(j, Sex);
             JSON_GET(j, Signature);
-            JSON_GET(j, SnsFlag);
             JSON_GET(j, StarFriend);
             JSON_GET(j, Uin);
             JSON_GET(j, UserName);
-            JSON_GET(j, VerifyFlag);
-            JSON_GET(j, WebWxPluginSwitch);
+
+            try {
+                JSON_GET(j, HideInputBarFlag);
+                JSON_GET(j, SnsFlag);
+                JSON_GET(j, VerifyFlag);
+                JSON_GET(j, WebWxPluginSwitch);
+                JSON_GET(j, RemarkPYInitial);
+                JSON_GET(j, RemarkPYQuanPin);
+            } catch (std::domain_error e) {
+
+            }
         }
 
         WxInitResponse::WxInitResponse() {}
@@ -167,16 +186,21 @@ namespace WebWx {
             : BaseResponse(j["BaseResponse"]), SyncKey(j["SyncKey"]), User(j["User"])
         {
             JSON_GET(j, ChatSet);
-            JSON_GET(j, ClickReportInterval);
             JSON_GET(j, ClientVersion);
             JSON_GET(j, Count);
             JSON_GET_LIST(j, ContactList);
-            JSON_GET(j, GrayScale);
             JSON_GET(j, InviteStartCount);
-            JSON_GET(j, MPSubscribeMsgCount);
-            JSON_GET_LIST(j, MPSubscribeMsgList);
             JSON_GET(j, SKey);
             JSON_GET(j, SystemTime);
+
+            try {
+                JSON_GET(j, ClickReportInterval);
+                JSON_GET(j, GrayScale);
+                JSON_GET(j, MPSubscribeMsgCount);
+                JSON_GET_LIST(j, MPSubscribeMsgList);
+            } catch (std::domain_error e) {
+
+            }
         }
 
         WxGetContactResponse::WxGetContactResponse() {}
@@ -226,8 +250,12 @@ namespace WebWx {
         WxSendResponse::WxSendResponse(const json& j)
             : BaseResponse(j["BaseResponse"])
         {
-            JSON_GET(j, MsgID);
-            JSON_GET(j, LocalID);
+            try {
+                JSON_GET(j, MsgID);
+                JSON_GET(j, LocalID);
+            } catch (std::domain_error e) {
+
+            }
         }
     }
 }

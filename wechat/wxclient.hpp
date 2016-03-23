@@ -9,34 +9,23 @@
 
 #include "vrhttp.hpp"
 #include "wxapi.hpp"
+#include "wxhandler.hpp"
 
-namespace WeChat_Http {
+#include "models/wx_baserequest.hpp"
+#include "models/wxmodel.hpp"
 
-    using VrSession = WeChat_Http::VirtualHttpSession;
-    using VrReply = WeChat_Http::VirtualHttpReply;
-    using VrRequest = WeChat_Http::VirtualHttpRequest;
-    using VrReqFactory = decltype(WeChat_Http::NewVirtualHttpRequest_NULLPTR);
+namespace WebWx {
+
+    using VrSession = Http::VirtualHttpSession;
+    using VrReply = Http::VirtualHttpReply;
+    using VrRequest = Http::VirtualHttpRequest;
+    using VrReqFactory = decltype(Http::NewVirtualHttpRequest_NULLPTR);
 
     static const std::string User_Agent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.75 Safari/537.36";
 
     static const std::string Referer = "https://wx.qq.com/?lang=en_US";
 
-    class WxHandler {
-    protected:
-        WxHandler() {}
-        virtual ~WxHandler() {};
-    public:
-        /* on login */
-        virtual void QRload(const std::string& qr_url) = 0;
-        virtual void AvatarLoad(const std::string& avatar) = 0;
-
-        /* after login */
-        virtual void WxInit(const std::string& json_string) = 0;
-        virtual void ContactsRefresh() = 0;
-        virtual void ChatRefresh(const std::string& username, const std::string& context) = 0;
-        virtual void Voice(const std::string& voice_url) = 0;
-        virtual void Image(const std::string& iamge_url) = 0;
-    };
+    using WxHandler = WebWx::WxHandler;
 
     class WxClient {
     private:
@@ -76,10 +65,13 @@ namespace WeChat_Http {
     private:
         std::string qr_uuid;
 
-        std::string wxsid;
-        std::string wxuin;
+        WebWx::Model::WxBaseRequest base_request;
+
+        std::string& wxsid = base_request.Sid;
+        std::string& wxuin = base_request.Uin;
+        std::string& skey = base_request.Skey;
+
         std::string pass_ticket;
-        std::string skey;
 
         std::string synckey;
         std::string synckey_json;

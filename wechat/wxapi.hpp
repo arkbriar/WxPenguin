@@ -5,7 +5,7 @@
 
 #include <string>
 
-namespace WeChat_Http {
+namespace WebWx {
 
     namespace Util {
         std::string UrlEncode(const std::string& value);

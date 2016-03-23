@@ -1,10 +1,13 @@
 #include "vrhttp.hpp"
 
-namespace WeChat_Http {
+namespace WebWx {
+    namespace Http {
 
-    VirtualHttpRequest::~VirtualHttpRequest() {}
+        VirtualHttpRequest::~VirtualHttpRequest() {}
 
-    VirtualHttpReply::~VirtualHttpReply() {}
+        VirtualHttpReply::~VirtualHttpReply() {}
 
-    VirtualHttpSession::~VirtualHttpSession() {}
+        VirtualHttpSession::~VirtualHttpSession() {}
+
+    }
 }

@@ -1,10 +1,10 @@
 #include "json/json.hpp"
 #include "util.hpp"
-#include "wechat.hpp"
+#include "wxclient.hpp"
 
 using json = nlohmann::json;
 
-using WxClient = WeChat_Http::WxClient;
+using WxClient = WebWx::WxClient;
 
 // extern function from msg.cc
 json& SendingPayload(json& payload, const std::string& content, const std::string& from, const std::string& to, int type);

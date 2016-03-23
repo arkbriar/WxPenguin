@@ -65,7 +65,7 @@ namespace WebWx {
             };
 
             WxInitResponse();
-            WxInitResponse(const std::string&);
+            explicit WxInitResponse(const std::string&);
 
             WxBaseResponse BaseResponse;
             std::string ChatSet;
@@ -89,7 +89,7 @@ namespace WebWx {
         class WxGetContactResponse {
         public:
             WxGetContactResponse();
-            WxGetContactResponse(const std::string&);
+            explicit WxGetContactResponse(const std::string&);
 
             WxBaseResponse BaseResponse;
             int MemberCount;
@@ -103,7 +103,7 @@ namespace WebWx {
         class WxBatchContactResponse {
         public:
             WxBatchContactResponse();
-            WxBatchContactResponse(const std::string&);
+            explicit WxBatchContactResponse(const std::string&);
 
             WxBaseResponse BaseResponse;
             std::vector<WxContact> ContactList;
@@ -116,7 +116,7 @@ namespace WebWx {
         class WxSyncResponse {
         public:
             WxSyncResponse();
-            WxSyncResponse(const std::string&);
+            explicit WxSyncResponse(const std::string&);
 
             WxBaseResponse BaseResponse;
             int AddMsgCount;
@@ -132,7 +132,7 @@ namespace WebWx {
         class WxSendResponse {
         public:
             WxSendResponse();
-            WxSendResponse(const std::string&);
+            explicit WxSendResponse(const std::string&);
 
             WxBaseResponse BaseResponse;
             std::string MsgID;

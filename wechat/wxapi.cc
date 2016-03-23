@@ -1,8 +1,8 @@
-#include "wechat.hpp"
+#include "wxapi.hpp"
 
-using WxWebApi = WeChat_Http::WxWebApi;
+using WxWebApi = WebWx::WxWebApi;
 
-namespace WeChat_Http {
+namespace WebWx {
     const WxWebApi
         Wx("https://wx.qq.com"),
         WxQRUUid("https://login.weixin.qq.com/jslogin?appid=wx782c26e4c19acffb&redirect_uri=https%3A%2F%2Fwx.qq.com%2Fcgi-bin%2Fmmwebwx-bin%2Fwebwxnewloginpage&fun=new&lang=en_US&_={##}"),

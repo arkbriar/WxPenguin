@@ -3,9 +3,9 @@
 #include <regex>
 
 #include "util.hpp"
-#include "wechat.hpp"
+#include "wxclient.hpp"
 
-using WxClient = WeChat_Http::WxClient;
+using WxClient = WebWx::WxClient;
 
 std::string WxClient::GetQRCode()
 {

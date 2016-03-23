@@ -82,6 +82,6 @@ A flexiable, extendable library of web wechat client.
 
 ```cpp
     std::shared_ptr<VirtualHttpRequest> NewVirtualHttpRequest_NULLPTR();
-    using VrReqFactory = decltype(WeChat_Http::NewVirtualHttpRequest_NULLPTR);
+    using VrReqFactory = decltype(WebWx::NewVirtualHttpRequest_NULLPTR);
 ```
 

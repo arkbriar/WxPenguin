@@ -1,22 +1,17 @@
 #include "json/json.hpp"
 #include "util.hpp"
-#include "wechat.hpp"
+#include "wxclient.hpp"
 
 using json = nlohmann::json;
 
-using WxClient = WeChat_Http::WxClient;
+using WxClient = WebWx::WxClient;
 
 void WxClient::WxInit()
 {
     json payload;
-    json base_request;
-    base_request["Uin"] = wxuin;
-    base_request["Sid"] = wxsid;
-    base_request["Skey"] = skey;
-    base_request["DeviceID"] = "e762880274648329";
-    payload["BaseRequest"] = base_request;
+    payload["BaseRequest"] = base_request.GetJson();
 
-    auto wxapi = WeChat_Http::WxInit;
+    auto wxapi = WebWx::WxInit;
     wxapi.SetParam("r", ~static_cast<int>(Util::GetUtcMilli()));
     wxapi.SetParam("pass_ticket", pass_ticket);
     auto request = r_factory();
@@ -82,12 +77,7 @@ std::string WxClient::GetContactInfo(const VrSession& session, const std::vector
     request->SetUrl(wxapi.url);
 
     json payload;
-    json base_request;
-    base_request["Uin"] = wxuin;
-    base_request["Sid"] = wxsid;
-    base_request["Skey"] = skey;
-    base_request["DeviceID"] = "e762880274648329";
-    payload["BaseRequest"] = base_request;
+    payload["BaseRequest"] = base_request.GetJson();
     payload["Count"] = pairs.size();
     json::array_t list;
     for(auto i : pairs) {
@@ -109,16 +99,11 @@ void WxClient::WxSync()
 void WxClient::WxSync(const VrSession& session)
 {
     json payload;
-    json base_request;
-    base_request["Uin"] = wxuin;
-    base_request["Sid"] = wxsid;
-    base_request["Skey"] = skey;
-    base_request["DeviceID"] = "e762880274648329";
-    payload["BaseRequest"] = base_request;
+    payload["BaseRequest"] = base_request.GetJson();
     payload["SyncKey"] = json::parse(synckey_json);
     payload["rr"] = ~static_cast<int>(Util::GetUtcMilli());
 
-    auto wxapi = WeChat_Http::WxSync;
+    auto wxapi = WebWx::WxSync;
     wxapi.SetParam("sid", wxsid);
     wxapi.SetParam("skey", skey);
     wxapi.SetParam("pass_ticket", pass_ticket);
@@ -143,7 +128,7 @@ void WxClient::WxSyncCheck()
 
 void WxClient::WxSyncCheck(const VrSession& session)
 {
-    auto wxapi = WeChat_Http::WxSyncCheck;
+    auto wxapi = WebWx::WxSyncCheck;
     wxapi.SetParam("r", Util::GetUtcMilli());
     wxapi.SetParam("skey", skey);
     wxapi.SetParam("sid", wxsid);
@@ -187,7 +172,7 @@ json& SendingPayload(json& payload, const std::string& content, const std::strin
     msg["Content"] = content;
     msg["FromUserName"] = from;
     msg["ToUserName"] = to;
-    msg["LocalID"] = std::to_string(WeChat_Http::Util::GetUtcMilli()).append("0").append(std::to_string((std::rand() & 0x1ff) + 100));
+    msg["LocalID"] = std::to_string(WebWx::Util::GetUtcMilli()).append("0").append(std::to_string((std::rand() & 0x1ff) + 100));
     msg["ClientMsgId"] = msg["LocalId"].get<std::string>();
 
     payload["Msg"] = msg;
@@ -196,19 +181,14 @@ json& SendingPayload(json& payload, const std::string& content, const std::strin
 
 bool WxClient::SendText(const std::string& msg, const std::string& from, const std::string& to) const
 {
-    auto wxapi = WeChat_Http::WxGetImg;
+    auto wxapi = WebWx::WxGetImg;
     wxapi.SetParam("pass_ticket", pass_ticket);
 
     auto request = r_factory();
     request->SetUrl(wxapi.url);
 
     json payload;
-    json base_request;
-    base_request["Uin"] = wxuin;
-    base_request["Sid"] = wxsid;
-    base_request["Skey"] = skey;
-    base_request["DeviceID"] = "e762880274648329";
-    payload["BaseRequest"] = base_request;
+    payload["BaseRequest"] = base_request.GetJson();
     auto response = session.Post(*request, SendingPayload(payload, msg, from, to, 1).dump());
     if(response->Error()) throw std::runtime_error(response->Error().ErrorMessage());
 

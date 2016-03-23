@@ -7,7 +7,7 @@
 
 #include "util.hpp"
 
-using namespace WeChat_Http::Util;
+using namespace WebWx::Util;
 
 std::uint64_t GetUtcMilli()
 {

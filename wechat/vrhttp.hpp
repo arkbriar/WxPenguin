@@ -11,94 +11,96 @@
 #include <cstdint>
 #include <memory>
 
-namespace WeChat_Http {
+namespace WebWx {
+    namespace Http {
 
-    class VirtualHttpRequest {
-    public:
-        VirtualHttpRequest() {}
-        virtual ~VirtualHttpRequest() = 0;
+        class VirtualHttpRequest {
+        public:
+            VirtualHttpRequest() {}
+            virtual ~VirtualHttpRequest() = 0;
 
-        virtual void SetRawHeader(const std::string &headername, const std::string &headervalue) noexcept = 0;
-        virtual void SetUrl(const std::string url) noexcept = 0;
-    };
+            virtual void SetRawHeader(const std::string &headername, const std::string &headervalue) noexcept = 0;
+            virtual void SetUrl(const std::string url) noexcept = 0;
+        };
 
-    std::shared_ptr<VirtualHttpRequest> NewVirtualHttpRequest_NULLPTR();
+        std::shared_ptr<VirtualHttpRequest> NewVirtualHttpRequest_NULLPTR();
 
-    class HttpError {
-    public:
-        HttpError() : error(0), ok(0) {}
+        class HttpError {
+        public:
+            HttpError() : error(0), ok(0) {}
 
-        template <
-            typename ErrorCodeType,
-            typename std::enable_if<std::is_enum<ErrorCodeType>::value, int>::type = 0
-            >
-        HttpError(const ErrorCodeType code, const std::string& error_message)
-            : error((std::int64_t)code), message(error_message) {}
+            template <
+                typename ErrorCodeType,
+                typename std::enable_if<std::is_enum<ErrorCodeType>::value, int>::type = 0
+                >
+            HttpError(const ErrorCodeType code, const std::string& error_message)
+                : error((std::int64_t)code), message(error_message) {}
 
-        explicit operator bool() const {
-            return error != ok;
-        }
+            explicit operator bool() const {
+                return error != ok;
+            }
 
-        template <
-            typename ErrorCodeType,
-            typename std::enable_if<std::is_enum<ErrorCodeType>::value, int>::type = 0
-            >
-        bool operator == (const ErrorCodeType code) {
-            return std::int64_t(code) == error;
-        }
+            template <
+                typename ErrorCodeType,
+                typename std::enable_if<std::is_enum<ErrorCodeType>::value, int>::type = 0
+                >
+            bool operator == (const ErrorCodeType code) {
+                return std::int64_t(code) == error;
+            }
 
-        bool operator == (const std::int64_t code) {
-            return code == error;
-        }
+            bool operator == (const std::int64_t code) {
+                return code == error;
+            }
 
-        template <
-            typename ErrorCodeType,
-            typename std::enable_if<std::is_enum<ErrorCodeType>::value, int>::type = 0
-            >
-        ErrorCodeType Error() {
-            return (ErrorCodeType)error;
-        }
+            template <
+                typename ErrorCodeType,
+                typename std::enable_if<std::is_enum<ErrorCodeType>::value, int>::type = 0
+                >
+            ErrorCodeType Error() {
+                return (ErrorCodeType)error;
+            }
 
-        std::int64_t Error() {
-            return error;
-        }
+            std::int64_t Error() {
+                return error;
+            }
 
-        const std::string& ErrorMessage() const noexcept {
-            return message;
-        }
+            const std::string& ErrorMessage() const noexcept {
+                return message;
+            }
 
-    private:
-        std::int64_t error;
-        std::string message;
+        private:
+            std::int64_t error;
+            std::string message;
 
-        const std::int64_t ok;
-    };
+            const std::int64_t ok;
+        };
 
-    class VirtualHttpReply {
-    public:
-        VirtualHttpReply() {}
-        virtual ~VirtualHttpReply() = 0;
+        class VirtualHttpReply {
+        public:
+            VirtualHttpReply() {}
+            virtual ~VirtualHttpReply() = 0;
 
-        virtual std::string Url() const noexcept = 0;
-        virtual std::string Header(const std::string &key) const noexcept = 0;
-        virtual std::uint64_t Status() const noexcept = 0;
-        virtual std::string Response() const noexcept = 0;
-        virtual HttpError Error() const noexcept = 0;
-    };
+            virtual std::string Url() const noexcept = 0;
+            virtual std::string Header(const std::string &key) const noexcept = 0;
+            virtual std::uint64_t Status() const noexcept = 0;
+            virtual std::string Response() const noexcept = 0;
+            virtual HttpError Error() const noexcept = 0;
+        };
 
-    class VirtualHttpSession {
-    public:
-        VirtualHttpSession() {}
-        virtual ~VirtualHttpSession() = 0;
+        class VirtualHttpSession {
+        public:
+            VirtualHttpSession() {}
+            virtual ~VirtualHttpSession() = 0;
 
-        virtual std::shared_ptr<VirtualHttpReply> Get(const VirtualHttpRequest &request) const = 0;
-        virtual std::shared_ptr<VirtualHttpReply> Head(const VirtualHttpRequest &request) const = 0;
-        virtual std::shared_ptr<VirtualHttpReply> Post(const VirtualHttpRequest &request, std::string data) const = 0;
-        virtual std::shared_ptr<VirtualHttpReply> Put(const VirtualHttpRequest &request, std::string data) const = 0;
+            virtual std::shared_ptr<VirtualHttpReply> Get(const VirtualHttpRequest &request) const = 0;
+            virtual std::shared_ptr<VirtualHttpReply> Head(const VirtualHttpRequest &request) const = 0;
+            virtual std::shared_ptr<VirtualHttpReply> Post(const VirtualHttpRequest &request, std::string data) const = 0;
+            virtual std::shared_ptr<VirtualHttpReply> Put(const VirtualHttpRequest &request, std::string data) const = 0;
 
-        virtual std::string GetCookieValue(const std::string key) const = 0;
-    };
+            virtual std::string GetCookieValue(const std::string key) const = 0;
+        };
 
+    }
 }
 
 #endif /* end of include guard: VRHTTP_HPP_OX1KUYLI */
