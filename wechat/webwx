@@ -5,6 +5,7 @@
 
 #include "vrhttp.hpp"
 #include "wechat.hpp"
+#include "models/wxmodel.hpp"
 
 namespace WebWx {
     using VrSession = WeChat_Http::VrSession;

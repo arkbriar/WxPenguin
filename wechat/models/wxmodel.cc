@@ -10,6 +10,12 @@
 
 namespace WebWx {
     namespace Model {
+
+        using WxRecommendInfo = WxMsg::WxRecommendInfo;
+        using WxAppInfo = WxMsg::WxAppInfo;
+        using WxMember = WxContact::WxMember;
+        using WxUser = WxInitResponse::WxUser;
+
         WxBaseResponse::WxBaseResponse() {}
 
         WxBaseResponse::WxBaseResponse(const json& j)

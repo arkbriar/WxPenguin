@@ -30,8 +30,21 @@ namespace WeChat_Http {
         }
     };
 
-    extern const WxWebApi Wx, WxQRUUid, WxQR, WxLoginCheck, WxGetImg, WxLoginCheckAfterScan,
-           WxInit, WxIcon, WxHeadImg, WxContactList, WxContactInfo, WxSyncCheck, WxSync, WxSendImg;
+    extern const WxWebApi
+        Wx,
+        WxQRUUid,
+        WxQR,
+        WxLoginCheck,
+        WxGetImg,
+        WxLoginCheckAfterScan,
+        WxInit,
+        WxIcon,
+        WxHeadImg,
+        WxContactList,
+        WxContactInfo,
+        WxSyncCheck,
+        WxSync,
+        WxSendImg;
 }
 
 

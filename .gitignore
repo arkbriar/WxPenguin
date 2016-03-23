@@ -4,3 +4,4 @@ build
 *.qmlproject.user*
 *~
 .ycm_extra_conf*.py*
+*.gch

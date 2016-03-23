@@ -47,7 +47,7 @@ std::string WxClient::LoginCheckLoop() {
         auto wxapi = WxLoginCheck;
         if(isScan) wxapi = WxLoginCheckAfterScan;
         wxapi.SetParam("uuid", qr_uuid);
-        wxapi.SetParam("r", ~(int)(Util::GetUtcMilli()));
+        wxapi.SetParam("r", ~static_cast<int>(Util::GetUtcMilli()));
         wxapi.SetParam("_", Util::GetUtcMilli());
 
         auto request = r_factory();
