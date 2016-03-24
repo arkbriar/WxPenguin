@@ -18,7 +18,7 @@ namespace WebWx {
         class _VirtualHttpRequest {
         public:
             _VirtualHttpRequest() {}
-            virtual ~_VirtualHttpRequest() = 0;
+            virtual ~_VirtualHttpRequest() {}
 
             virtual void SetRawHeader(const std::string &headername, const std::string &headervalue) noexcept = 0;
             virtual void SetUrl(const std::string url) noexcept = 0;
@@ -104,6 +104,8 @@ namespace WebWx {
             virtual std::string Header(const std::string &key) const noexcept = 0;
             virtual std::string Response() const noexcept = 0;
             virtual HttpError Error() const noexcept = 0;
+
+            virtual std::string Cookie(const std::string& key) const noexcept = 0;
         };
 
         class VirtualHttpSession {
@@ -115,7 +117,6 @@ namespace WebWx {
             virtual std::shared_ptr<VirtualHttpReply> Head(const VirtualHttpRequest &request) const = 0;
             virtual std::shared_ptr<VirtualHttpReply> Post(const VirtualHttpRequest &request, const std::string &data) const = 0;
             virtual std::shared_ptr<VirtualHttpReply> Put(const VirtualHttpRequest &request, const std::string &data) const = 0;
-
         };
 
     }

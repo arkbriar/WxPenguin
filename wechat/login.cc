@@ -140,8 +140,8 @@ void WxClient::GetSidAndUid(const std::string& url)
         throw std::runtime_error("cannot find pass_ticket in response");
     }
 
-    wxsid = session.GetCookieValue("wxsid");
-    wxuin = session.GetCookieValue("wxuin");
+    wxsid = response->Cookie("wxsid");
+    wxuin = response->Cookie("wxuin");
     if(wxsid.empty() || wxuin.empty()) {
         throw std::runtime_error("can not find wxsid or wxuin in cooike");
     }

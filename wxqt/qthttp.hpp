@@ -7,6 +7,8 @@
 #include <QNetworkRequest>
 #include <QNetworkReply>
 #include <QNetworkAccessManager>
+#include <QNetworkCookie>
+#include <QNetworkCookieJar>
 
 #include "wechat/vrhttp.hpp"
 
@@ -60,6 +62,19 @@ namespace WxPenguin {
                 return WebWx::Http::HttpError(r->error(), std::to_string(static_cast<int>(r->error())), QNetworkReply::NoError);
             }
 
+            std::string Cookie(const std::string& key) const noexcept override {
+                if(!r) return std::string();
+                auto _SetCookie = r->header(QNetworkRequest::SetCookieHeader);
+                if(!_SetCookie.isValid()) return std::string();
+                auto _CookieList = qvariant_cast<QList<QNetworkCookie>>(_SetCookie);
+                for (auto i : _CookieList) {
+                    if (i.name().toStdString() == key) {
+                        return i.value().toStdString();
+                    }
+                }
+                return std::string();
+            }
+
             friend class QtHttpSession;
         };
 
@@ -72,8 +87,9 @@ namespace WxPenguin {
         class QtHttpSession : public WebWx::Http::VirtualHttpSession {
         private:
             QNetworkAccessManager *m = nullptr;
+            QNetworkCookieJar _CookieJar;
         public:
-            QtHttpSession() {m = new QNetworkAccessManager;}
+            QtHttpSession() {m = new QNetworkAccessManager; m->setCookieJar(&_CookieJar);}
             virtual ~QtHttpSession() {if(m) delete m;}
 
             VrReplySharedPtr Get(const VrRequest &request) const override {
@@ -84,6 +100,7 @@ namespace WxPenguin {
                         );
                 return VrReplySharedPtr(ret);
             }
+
             VrReplySharedPtr Head(const VrRequest &request) const override {
                 auto ret = new QtHttpReply(
                         m->head(
@@ -92,6 +109,7 @@ namespace WxPenguin {
                         );
                 return VrReplySharedPtr(ret);
             }
+
             VrReplySharedPtr Post(const VrRequest &request, const std::string &data) const override {
                 auto ret = new QtHttpReply(
                         m->post(
@@ -101,6 +119,7 @@ namespace WxPenguin {
                         );
                 return VrReplySharedPtr(ret);
             }
+
             VrReplySharedPtr Put(const VrRequest &request, const std::string &data) const override {
                 auto ret = new QtHttpReply(
                             m->put(
