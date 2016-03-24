@@ -14,14 +14,22 @@
 namespace WebWx {
     namespace Http {
 
-        class VirtualHttpRequest {
+        template <typename _DelegateType>
+        class _VirtualHttpRequest {
         public:
-            VirtualHttpRequest() {}
-            virtual ~VirtualHttpRequest() = 0;
+            _VirtualHttpRequest() {}
+            virtual ~_VirtualHttpRequest() = 0;
 
             virtual void SetRawHeader(const std::string &headername, const std::string &headervalue) noexcept = 0;
             virtual void SetUrl(const std::string url) noexcept = 0;
+
+            template <typename T>
+                const T* GetDelegate() const {return static_cast<T*>(_delegate);}
+        protected:
+            _DelegateType *_delegate = nullptr;
         };
+
+        using VirtualHttpRequest = _VirtualHttpRequest<void>;
 
         std::shared_ptr<VirtualHttpRequest> NewVirtualHttpRequest_NULLPTR();
 
@@ -29,12 +37,24 @@ namespace WebWx {
         public:
             HttpError() : error(0), ok(0) {}
 
+            HttpError(std::uint64_t code, const std::string& error_message)
+                : error(code), message(error_message), ok(0) {}
+            HttpError(std::uint64_t code, const char* error_message)
+                : error(code), message(error_message), ok(0) {}
+
             template <
                 typename ErrorCodeType,
                 typename std::enable_if<std::is_enum<ErrorCodeType>::value, int>::type = 0
                 >
-            HttpError(const ErrorCodeType code, const std::string& error_message)
-                : error((std::int64_t)code), message(error_message) {}
+            HttpError(const ErrorCodeType code, const std::string& error_message, const ErrorCodeType ok = static_cast<ErrorCodeType>(0))
+                : error(static_cast<std::int64_t>(code)), message(error_message), ok(static_cast<std::int64_t>(ok)) {}
+
+            template <
+                typename ErrorCodeType,
+                typename std::enable_if<std::is_enum<ErrorCodeType>::value, int>::type = 0
+                >
+            HttpError(const ErrorCodeType code, const char* error_message, const ErrorCodeType ok = static_cast<ErrorCodeType>(0))
+                : error(static_cast<std::int64_t>(code)), message(error_message), ok(static_cast<std::int64_t>(ok)) {}
 
             explicit operator bool() const {
                 return error != ok;
@@ -82,7 +102,6 @@ namespace WebWx {
 
             virtual std::string Url() const noexcept = 0;
             virtual std::string Header(const std::string &key) const noexcept = 0;
-            virtual std::uint64_t Status() const noexcept = 0;
             virtual std::string Response() const noexcept = 0;
             virtual HttpError Error() const noexcept = 0;
         };
@@ -94,10 +113,9 @@ namespace WebWx {
 
             virtual std::shared_ptr<VirtualHttpReply> Get(const VirtualHttpRequest &request) const = 0;
             virtual std::shared_ptr<VirtualHttpReply> Head(const VirtualHttpRequest &request) const = 0;
-            virtual std::shared_ptr<VirtualHttpReply> Post(const VirtualHttpRequest &request, std::string data) const = 0;
-            virtual std::shared_ptr<VirtualHttpReply> Put(const VirtualHttpRequest &request, std::string data) const = 0;
+            virtual std::shared_ptr<VirtualHttpReply> Post(const VirtualHttpRequest &request, const std::string &data) const = 0;
+            virtual std::shared_ptr<VirtualHttpReply> Put(const VirtualHttpRequest &request, const std::string &data) const = 0;
 
-            virtual std::string GetCookieValue(const std::string key) const = 0;
         };
 
     }
