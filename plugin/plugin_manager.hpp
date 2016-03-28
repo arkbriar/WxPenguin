@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <functional>
 
 #include "macros.h"
 
@@ -16,30 +17,44 @@ namespace WxPenguin {
         public:
             using WxPluginInstancePtr = WxPluginInstance *;
             using DynamicLibPtr = DynamicLib *;
+            using P_D_List = std::map<std::string, std::string>;
 
+            // Singleton
             static WxPluginManager& GetManager();
 
-            bool LoadAll() const;
+            bool LoadAll();
 
-            WxPluginInstance* Load(const std::string &plugin_name, int &err_code);
+            // err_code equals to
+            // 0, when ok
+            // -1, entry function not found
+            // -2, should never be this val. If you found err_code == -2, please report an issue
+            WxPluginInstance* Load(const std::string &plugin_name, const std::string &dll_name, int &err_code);
 
             bool LoadPlugin(WxPluginInstance *plugin);
 
             bool UnLoadAll();
 
-            bool Unload(const std::string &plugin_name);
+            bool UnLoad(const std::string &plugin_name);
 
             bool UnLoadPlugin(WxPluginInstance *plugin);
 
-            std::vector<WxPluginInstancePtr> GetAllPlugins() const;
+            const std::vector<WxPluginInstancePtr>& GetAllPlugins() const;
+
+            P_D_List ReadConf() const;
 
         private:
+            // initialize with an empty ReadConf_
+            std::function<P_D_List ()> ReadConf_ = std::function<P_D_List ()>([] () { return P_D_List(); });
+
             WxPluginManager() {}
             ~WxPluginManager() {}
-            static WxPluginManager _Manager;
+            static WxPluginManager Manager_;
 
-            std::vector<WxPluginInstancePtr> _Plugins;
-            std::map<std::string, DynamicLibPtr> _DynamicLibs;
+            std::vector<WxPluginInstancePtr> Plugins_;
+            // map plugins' name to instance
+            std::map<std::string, WxPluginInstancePtr> InstanceMap_;
+            // map plugins' name to dynamic libs
+            std::map<std::string, DynamicLibPtr> DynamicLibMap_;
         };
 
     }

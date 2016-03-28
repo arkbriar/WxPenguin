@@ -10,19 +10,11 @@ namespace WxPenguin {
 
         class DynamicLib {
         public:
-            DynamicLib() {}
+            DynamicLib();
 
-            ~DynamicLib() {
-                if (h_DynamicLib) FreeLib();
-                if (_LibName) {
-                    delete _LibName;
-                    _LibName = nullptr;
-                }
-            }
+            ~DynamicLib();
 
-            const char* GetName() const {
-                return _LibName;
-            }
+            const char* GetName() const;
 
             bool LoadLib(const char* lib_name);
 
@@ -31,7 +23,7 @@ namespace WxPenguin {
             void FreeLib();
         private:
             HLIB h_DynamicLib = nullptr;
-            char* _LibName = nullptr;
+            char* x_LibName = nullptr;
         };
 
     }
