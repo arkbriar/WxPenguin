@@ -13,6 +13,7 @@
 namespace WxPenguin {
     namespace Plugin {
 
+        // interface of ui/wx/other handlers
         class Handler;
 
         class WxPluginManager;

@@ -1,5 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>ui_qml/main.qml</file>
+        <file>img/wechat.png</file>
     </qresource>
 </RCC>
